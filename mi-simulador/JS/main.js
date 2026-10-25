@@ -1,4 +1,5 @@
 // classes
+
 class Pelicula {
 
     constructor(titulo, genero, vista, reseña, stock) {
@@ -17,25 +18,15 @@ class Pelicula {
         return true;
     }
 }
+
 // arrays
+
 const actores = JSON.parse(localStorage.getItem("actores")) || [];
 
-const peliculasIniciales = [
-    new Pelicula("obsesión", "Terror", false, "", 6),
-    new Pelicula("son como niños", "Comedia", false, "", 0),
-    new Pelicula("maze runner", "Ciencia ficción", false, "", 3),
-    new Pelicula("e.t.", "Ciencia ficción", false, "", 0),
-    new Pelicula("toy story", "Animación", false, "", 1),
-    new Pelicula("Bajo la misma estrella", "Drama", false, "", 3),
-    new Pelicula("Siempre el mismo día", "Romance", false, "", 5),
-    new Pelicula("Hachiko", "Drama", false, "", 0),
-    new Pelicula("Titanic", "Romance", false, "", 4),
-    new Pelicula("La vida es bella", "Drama", false, "", 6)
-];
+let peliculasIniciales = [];
+let peliculas = [];
 
-let peliculas = [...peliculasIniciales];
-
-// guardadas
+// guardadas local
 
 const guardadas = localStorage.getItem("peliculas");
 
@@ -50,6 +41,7 @@ if (guardadas !== null) {
         )
     );
 }
+
 // todos los get element by id
 
 const formulario = document.getElementById("formulario-pelicula");
@@ -78,37 +70,54 @@ const mensajeBienvenida = document.getElementById("mensaje-bienvenida");
 const estadoCarga = document.getElementById("estado-carga");
 const botonCargar = document.getElementById("boton-cargar");
 
-
 // localstorage pelis
+
 function guardarPeliculas() {
     localStorage.setItem("peliculas", JSON.stringify(peliculas));
 }
+
 // vaciar function
-function vaciarDiario() {
 
-    const confirmar = confirm("¿Estás seguro de que querés vaciar tu diario?");
+async function vaciarDiario() {
 
-    if (confirmar) {
+    const resultado = await Swal.fire({
+        title: "¿Estás seguro de vaciar tu diario?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, vaciar",
+        cancelButtonText: "Cancelar"
+    });
 
+    if (resultado.isConfirmed) {
         peliculas.length = 0;
-
-        localStorage.setItem("peliculas", JSON.stringify(peliculas));
-
+        guardarPeliculas();
         renderizarPeliculas();
 
         mensajeVaciar.textContent = "Tu diario fue vaciado correctamente.";
     }
 }
-
 botonVaciar.addEventListener("click", vaciarDiario);
+
 // function recuperar
 
-function recuperarDiario() {
+async function recuperarDiario() {
+    if (peliculasIniciales.length === 0) {
+        Swal.fire({
+            title: "No hay películas disponibles",
+            text: "No se pudieron cargar las películas originales",
+            icon: "error"
+        });
+        return;
+    }
+    const resultado = await Swal.fire({
+        title: "¿Querés recuperar las películas originales?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Sí, recuperar",
+        cancelButtonText: "Cancelar"
+    });
 
-    const confirmar = confirm("¿Querés recuperar las películas originales?");
-
-    if (confirmar) {
-
+    if (resultado.isConfirmed) {
         peliculas = peliculasIniciales.map(
             peli => new Pelicula(
                 peli.titulo,
@@ -120,13 +129,14 @@ function recuperarDiario() {
         );
 
         guardarPeliculas();
-
         renderizarPeliculas();
 
         mensajeVaciar.textContent = "¡Diario recuperado correctamente!";
     }
 }
+
 botonRecuperar.addEventListener("click", recuperarDiario);
+
 // Función para mostrar las películas 
 
 function renderizarPeliculas() {
@@ -161,21 +171,22 @@ function renderizarPeliculas() {
 
             </article>
         `;
-    
 
-    // Mostrar las reseñas guardadas
-    const tarjetas = contenedor.querySelectorAll(".tarjeta-pelicula");
 
-    tarjetas.forEach((tarjeta, indice) => {
+        // Mostrar las reseñas guardadas
 
-        tarjeta.querySelector(".input-resena").value =
-            peliculas[indice].reseña || "";
+        const tarjetas = contenedor.querySelectorAll(".tarjeta-pelicula");
 
-    });
-}
+        tarjetas.forEach((tarjeta, indice) => {
+
+            tarjeta.querySelector(".input-resena").value =
+                peliculas[indice].reseña || "";
+
+        });
     }
+}
 
-//  formulario
+//  formulario para agrgar
 
 formulario.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -202,14 +213,20 @@ formulario.addEventListener("submit", function (event) {
 
     renderizarPeliculas();
 
-    mensaje.textContent = "¡Película agregada a tu diario!";
+    Swal.fire({
+        title: "¡Película agregada!",
+        text: "La película se agregó correctamente a tu diario",
+        icon: "success",
+        timer: 1800,
+        showConfirmButton: false
+    });
 
     formulario.reset();
 });
 
 // click
 
-    contenedor.addEventListener("click", function(event) {
+contenedor.addEventListener("click", function (event) {
 
     const titulo = event.target.dataset.titulo;
 
@@ -226,6 +243,7 @@ formulario.addEventListener("submit", function (event) {
     }
 
     // ELIMINAR PELÍCULA
+
     if (event.target.classList.contains("boton-eliminar")) {
 
         peliculas.splice(indice, 1);
@@ -238,6 +256,7 @@ formulario.addEventListener("submit", function (event) {
     }
 
     // MARCAR COMO VISTA Y GUARDAR RESEÑA
+
     if (event.target.classList.contains("boton-vista")) {
 
         const pelicula = peliculas[indice];
@@ -264,11 +283,6 @@ formulario.addEventListener("submit", function (event) {
     }
 
 });
-
-
-// // Mostrar las películas iniciales al abrir la página
-// renderizarPeliculas();
-
 
 // function para buscarrrrr
 function consultar() {
@@ -302,6 +316,7 @@ function consultar() {
 }
 botonBuscar.addEventListener("click", consultar);
 
+// function para sacar stock total
 
 function total() {
 
@@ -314,7 +329,8 @@ function total() {
 }
 
 botonStock.addEventListener("click", total);
-// function para recomendar por animo 3
+
+// function para recomendar por animo 
 
 function recomendarPorEstadoDeAnimo() {
 
@@ -336,6 +352,7 @@ function recomendarPorEstadoDeAnimo() {
 botonRecomendar.addEventListener("click", recomendarPorEstadoDeAnimo);
 
 // actor function
+
 function actorFavorito() {
 
     const actor = inputActor.value.trim();
@@ -353,6 +370,7 @@ function actorFavorito() {
     inputActor.value = "";
 }
 
+// renderizarActores
 
 function renderizarActores() {
 
@@ -370,7 +388,9 @@ function renderizarActores() {
 botonActor.addEventListener("click", actorFavorito);
 
 renderizarActores();
-// Function CARGAR PELIZ
+
+// Function PROMESA
+
 function cargarPeliculas() {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -382,6 +402,9 @@ function cargarPeliculas() {
         }, 2000);
     });
 }
+
+// asincronooo
+
 async function mostrarDiario() {
     try {
         estadoCarga.textContent = " Cargando películas...";
@@ -404,16 +427,16 @@ async function mostrarDiario() {
     }
 }
 
-botonCargar.addEventListener("click", mostrarDiario);
+botonCargar.addEventListener("click", obtenerPeliculas);
 
 // inicio
+
 formularioUsuario.addEventListener("submit", function (event) {
 
     event.preventDefault();
 
     const nombre = inputNombre.value.trim();
     const añoNacimiento = Number(inputAño.value);
-
     const edad = new Date().getFullYear() - añoNacimiento;
 
     mensajeBienvenida.textContent =
@@ -431,83 +454,8 @@ if (nombreGuardado !== null) {
     mensajeBienvenida.textContent =
         "¡Bienvenido nuevamente, " + nombreGuardado + "!";
 }
-//mod 9
-// // setTimeout ( esto que esta adentro se va a ejecutar despues de tanto tiempo)
-// console.log(prepearanadomotores)
-// let largada=setTimeout(()=>{
-//     console.log("largadaaa")
-// },2000)
 
-// // setInterval(() =( se ejecuta en un intervalo de tiempo)> {
-    
-// console.log("atencion banderas amarillas")
-// let safety= setInterval(()=>{
-//     console.log("banderas amarillsa,seguir")
-// },1500)
-
-// // para cancelar el interval se llama clear interval
-// clearInterval(safety)
-// clearTimeout
-
-
-// let contador = 0;
-
-// const intervalo = setInterval(() => {
-//     contador++;
-//     console.log(contador);
-
-//     if (contador === 5) {
-//         clearInterval(intervalo);
-//     }
-// }, 1000);
-
-
-// Muestra 1, 2, 3, 4 y 5, aproximadamente uno por segundo.
-
-// // promesas
-//  function podioChecker (posicion) {
-//     return new Promise((resolve, reject) => {
-//         if(posicion > 3) {
-//             return reject(`Terminaste en la posicion "${posicion}" no vas al podio`)
-//         }
-//         setTimeout(()=> {
-//             resolve({
-//                 posicion,
-//                 result: "Felicitaciones! Vas al podio"
-//             })
-//         }, 1000)
-        
-//     })
-// }
-
-// podioChecker(5).then(data => console.log(data))  
-
-
-// JavaScript es un lenguaje de un solo hilo, es decir, puede ejecutar una tarea a la vez. Sin embargo, gracias al Event Loop, puede manejar tareas que tardan sin detener toda la página.
-
-// Call Stack (Pila de ejecución)
-// Es donde JavaScript organiza las funciones que debe ejecutar.
-// - Cuando se llama a una función, entra al Call Stack.
-// - Cuando termina, sale.
-// - Funciona con el sistema LIFO: el último en entrar es el primero en salir.
-
-// . .then() y .catch()
-// Son métodos utilizados para manejar el resultado de una promesa.
-
-// .then() se ejecuta cuando la promesa se cumple.
-
-// .catch() permite manejar los errores cuando la promesa se rechaza
-
-// La palabra async se utiliza para declarar una función asíncrona.
-// async function saludar() {
-//     return "Hola Mundo";
-// }
-
-// La palabra await permite esperar a que una promesa termine para obtener su resultado.
-// async function cargarUsuario() {
-//     const usuario = await obtenerUsuario();
-//     console.log(usuario);
-// }
+// settimeout
 
 setTimeout(() => {
     const mensaje = document.getElementById("recordatorio");
@@ -515,3 +463,63 @@ setTimeout(() => {
     mensaje.textContent =
         " ¡No olvides registrar las películas que viste!";
 }, 3000);
+
+
+// MOD 10
+
+const url = "./db/data.json";
+async function obtenerPeliculas() {
+
+    estadoCarga.textContent = "Cargando películas...";
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("No se pudieron cargar las películas");
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+
+        const peliculasDelJSON = data.map(peli =>
+            new Pelicula(
+                peli.titulo,
+                peli.genero,
+                peli.vista,
+                peli.reseña,
+                peli.stock
+            )
+        );
+
+        console.log(peliculasDelJSON);
+        peliculasIniciales = peliculasDelJSON;
+
+        if (localStorage.getItem("peliculas") === null) {
+            peliculas = peliculasDelJSON;
+            guardarPeliculas();
+        }
+
+        renderizarPeliculas();
+    }
+    catch (error) {
+        console.log("Hubo un error", error);
+        estadoCarga.textContent = "No se pudieron cargar las películas.";
+        Swal.fire({
+            title: "Error",
+            text: "No se pudieron cargar las películas",
+            icon: "error"
+        });
+    }
+    finally {
+        if (estadoCarga.textContent === "Cargando películas...") {
+            estadoCarga.textContent = "";
+        }
+
+        console.log("Finalizó la petición");
+    }
+
+}
+
+obtenerPeliculas();
