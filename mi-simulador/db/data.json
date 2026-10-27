@@ -1,0 +1,74 @@
+[
+    {
+        "titulo": "obsesión",
+        "genero": "Terror",
+        "vista": false,
+        "reseña": "",
+        "stock": 6
+    },
+    {
+        "titulo": "son como niños",
+        "genero": "Comedia",
+        "vista": false,
+        "reseña": "",
+        "stock": 0
+    },
+    {
+        "titulo": "maze runner",
+        "genero": "Ciencia ficción",
+        "vista": false,
+        "reseña": "",
+        "stock": 3
+    },
+    {
+        "titulo": "e.t.",
+        "genero": "Ciencia ficción",
+        "vista": false,
+        "reseña": "",
+        "stock": 0
+    },
+    {
+        "titulo": "toy story",
+        "genero": "Animación",
+        "vista": false,
+        "reseña": "",
+        "stock": 1
+    },
+    {
+        "titulo": "Bajo la misma estrella",
+        "genero": "Drama",
+        "vista": false,
+        "reseña": "",
+        "stock": 3
+    },
+    {
+        "titulo": "Siempre el mismo día",
+        "genero": "Romance",
+        "vista": false,
+        "reseña": "",
+        "stock": 5
+    },
+    {
+        "titulo": "Hachiko",
+        "genero": "Drama",
+        "vista": false,
+        "reseña": "",
+        "stock": 0
+    },
+    {
+        "titulo": "Titanic",
+        "genero": "Romance",
+        "vista": false,
+        "reseña": "",
+        "stock": 4
+    },
+    {
+        "titulo": "La vida es bella",
+        "genero": "Drama",
+        "vista": false,
+        "reseña": "",
+        "stock": 6
+    }
+]
+
+
